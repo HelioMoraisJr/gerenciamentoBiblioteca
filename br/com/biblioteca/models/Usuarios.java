@@ -1,4 +1,4 @@
-package br.com.biblioteca.controller;
+package br.com.biblioteca.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class Usuarios {
         livrosEmprestados.add(livros);
     }
 
-    public void removerLivero(Livros livros){
+    public void removerLivro(Livros livros){
         livrosEmprestados.remove(livros);
     }
 }

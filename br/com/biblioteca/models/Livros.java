@@ -1,4 +1,4 @@
-package br.com.biblioteca.controller;
+package br.com.biblioteca.models;
 
 public class Livros {
 
@@ -40,4 +40,5 @@ public class Livros {
     public boolean isDisponivel(){
         return disponivel;
     }
+
 }

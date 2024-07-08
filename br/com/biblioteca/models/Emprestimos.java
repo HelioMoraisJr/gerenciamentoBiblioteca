@@ -1,4 +1,4 @@
-package br.com.biblioteca.controller;
+package br.com.biblioteca.models;
 
 import java.time.LocalDate;
 
