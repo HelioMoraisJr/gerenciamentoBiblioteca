@@ -1,8 +1,10 @@
 package br.com.biblioteca.principal;
 
+import br.com.biblioteca.models.Emprestimos;
 import br.com.biblioteca.models.Livros;
 import br.com.biblioteca.models.Usuarios;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class Bliblioteca {
@@ -34,6 +36,14 @@ public class Bliblioteca {
 
         Usuarios primeiroUsuario = new Usuarios("Helio", "1");
         Usuarios segundoUsuario  = new Usuarios("Alaide", "2");
+
+        //Lista de usuarios
+        ArrayList<Usuarios> listaDeUsuarios = new ArrayList<>();
+        listaDeUsuarios.add(primeiroUsuario);
+        listaDeUsuarios.add(segundoUsuario);
+
+        //Lista de empréstimos
+        ArrayList<Emprestimos> listaDeEmprestimos = new ArrayList<>();
 
 
         // Remover livros com ISBN duplicados
@@ -71,7 +81,6 @@ public class Bliblioteca {
                     System.out.println();
                 }
             } else if (opcao == 2) { // Buscar
-
                 System.out.println("Qual é o título: ");
                 String tituloBuscar = leitor.nextLine().toLowerCase();
 
@@ -91,14 +100,77 @@ public class Bliblioteca {
                     System.out.println("Livro não encontrado.");
                 }
             } else if (opcao == 3) { // Emprestar
+                System.out.println("Qual é  o título do livro que deseja emprestar:");
+                String tituloEmprestar = leitor.nextLine().toLowerCase();
 
+                Livros livroParaEmprestar = null;
+                for(Livros livro : listaDeLivros){
+                    if(livro.getTitulo().equalsIgnoreCase(tituloEmprestar) && livro.isDisponivel()){
+                        livroParaEmprestar = livro;
+                        break;
+                    }
+                }
 
+                if (livroParaEmprestar == null){
+                    System.out.println("Livro não encontrado ou não disponível para empréstimo.");
+                } else {
+                    System.out.println("Qual é o ID do usuário que está emprestando o livro: ");
+                    String idUsuario = leitor.nextLine();
 
-            } else  { // Devolver
-                System.out.println("Devolução");
+                    Usuarios usuarioParaEmprestar = null;
+                    for(Usuarios usuario : listaDeUsuarios){
+                        if (usuario.getId().equals(idUsuario)){
+                            usuarioParaEmprestar = usuario;
+                            break;
+                        }
+                    }
+
+                    if (usuarioParaEmprestar == null){
+                        System.out.println("Usuário não encontrado.");
+                    } else{
+                        livroParaEmprestar.setDisponivel(false);
+                        usuarioParaEmprestar.adicionarLivro(livroParaEmprestar);
+                        Emprestimos novoEmprestismo = new Emprestimos(livroParaEmprestar,usuarioParaEmprestar,null, LocalDate.now());
+                        listaDeEmprestimos.add(novoEmprestismo);
+                        System.out.println("Livro emprestado com sucesso!");
+                    }
+
+                }
+
+            } else if (opcao == 4) { // Devolver
+
+                System.out.println("Qual é o título do livro que deseja devolver: ");
+                String tituloDevolver = leitor.nextLine();
+
+                Livros livroParaDevolver = null;
+                for(Livros livro : listaDeLivros){
+                    if(livro.getTitulo().equalsIgnoreCase(tituloDevolver) && !livro.isDisponivel()){
+                        livroParaDevolver = livro;
+                        break;
+                    }
+                }
+
+                if (livroParaDevolver == null){
+                    System.out.println("Livro não encontrado ou não foi emprestado.");
+                } else {
+                    Emprestimos emprestimoParaFinalizar = null;
+                    for(Emprestimos emprestimos : listaDeEmprestimos){
+                        if (emprestimos.getLivros().equals(livroParaDevolver) && emprestimos.getDataDevolucao() == null){
+                            emprestimoParaFinalizar = emprestimos;
+                            break;
+                        }
+                    }
+
+                    if(emprestimoParaFinalizar == null){
+                        System.out.println("Empréstimo não encontrado.");
+                    } else {
+                        livroParaDevolver.setDisponivel(true);
+                        emprestimoParaFinalizar.getUsuarios().removerLivro(livroParaDevolver);
+                        emprestimoParaFinalizar.setDataDevolucao(LocalDate.now());
+                        System.out.println("Livro devolvido com sucesso!");
+                    }
+                }
             }
-
-
         }
     }
 }
